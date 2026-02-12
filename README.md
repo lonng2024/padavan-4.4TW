@@ -118,15 +118,43 @@ This repository is based on the original `rt-n56u` with the latest **MTK 4.4.198
 
 ## 🚀 Supported Devices (Kernel 4.4)
 
-We have expanded support to cover a wide range of MT7621 devices. Pick the one you love!
+This branch targets the **High-Performance MT7621** devices.
+We support the legends of the router world, from the iconic K2P to the powerful Xiaomi Pro.
+*(This list corresponds directly to the `target_select` menu in the build workflow.)*
 
-| Brand | Models |
+| Brand | Supported Models |
 | :--- | :--- |
-| **Phicomm** | K2P, K2P-USB, K2P-NANO |
-| **Xiaomi** | MI-R3P, MI-R3G, RM2100 |
-| **JCG** | JCG-Q20, JCG-AC860M, JCG-836PRO, JCG-Y2 |
-| **D-Link** | DIR-878, DIR-882 |
-| **Others** | CR660x, MR2600, NETGEAR-BZV, XY-C1, NEWIFI3 |
+| **Phicomm** | **K2P** (The Legend), K2P-NANO, K2P-USB |
+| **Xiaomi / Redmi** | **MI-R3P (Pro)**, MI-R3G, **RM2100 (Redmi AC2100)**, CR660x |
+| **D-Link** | **DIR-878**, **DIR-882** (EXO AC2600) |
+| **Newifi** | **NEWIFI3** (Newifi D2) |
+| **JCG** | JCG-AC860M, JCG-836PRO, JCG-Q20, JCG-Y2 |
+| **Netgear** | **NETGEAR-BZV** (R6800/R6700v2 series) |
+| **Others** | MR2600, XY-C1 |
+
+> *Kernel 4.4 brings better driver support for newer Wi-Fi chips (like MT7615) found in these high-performance devices.*
+
+---
+
+## 🌐 Multi-Language Support
+
+We believe in a borderless internet. The firmware now supports **14 Languages** out of the box!
+*(Select your preferred language in the `language_select` menu.)*
+
+* **English_Only** (Default)
+* **CN (繁體中文)** - Traditional Chinese
+* **RU (Pусский)** - Russian
+* **ES (Español)** - Spanish
+* **BR (Brazil)** - Portuguese
+* **CZ (Česky)** - Czech
+* **DA (Dansk)** - Danish
+* **DE (Deutsch)** - German
+* **FI (Finsk)** - Finnish
+* **FR (Français)** - French
+* **NO (Norsk)** - Norwegian
+* **PL (Polski)** - Polish
+* **SV (Svensk)** - Swedish
+* **UK (Українська)** - Ukrainian
 
 ---
 
