@@ -1576,16 +1576,18 @@ jobs:
           echo "📂 Config Path: $CONFIG_PATH"
           
           if [ -f "$CONFIG_PATH" ]; then
-            # 2. 檢查是否已經存在 CAKE 設定
-            if grep -q "CONFIG_NET_SCH_CAKE" "$CONFIG_PATH"; then
+            # 2. 檢查是否已經存在 CAKE 設定 (容許 =y 或 =m)
+            if grep -qE "CONFIG_NET_SCH_CAKE=[ym]" "$CONFIG_PATH"; then
               echo "⚠️ CAKE module is already enabled in config."
             else
               echo "🔧 Injecting CAKE module..."
               
               # 3. 使用 sed 在 FQ_CODEL 之後插入 CAKE
               # 如果找不到 FQ_CODEL，則附加到檔案末尾
-              if grep -q "CONFIG_NET_SCH_FQ_CODEL=m" "$CONFIG_PATH"; then
-                sed -i '/CONFIG_NET_SCH_FQ_CODEL=m/a CONFIG_NET_SCH_CAKE=m' "$CONFIG_PATH"
+              # (★ 修改點：FQ_CODEL 也容許 =y 或 =m)
+              if grep -qE "CONFIG_NET_SCH_FQ_CODEL=[ym]" "$CONFIG_PATH"; then
+                # sed 搜尋時只匹配到等號，後面不管接 y 還是 m 都會插在它下一行
+                sed -i '/CONFIG_NET_SCH_FQ_CODEL=/a CONFIG_NET_SCH_CAKE=m' "$CONFIG_PATH"
                 echo "✅ Inserted CAKE after FQ_CODEL."
               else
                 echo "CONFIG_NET_SCH_CAKE=m" >> "$CONFIG_PATH"
@@ -1593,8 +1595,8 @@ jobs:
               fi
             fi
             
-            # 再次驗證
-            if grep -q "CONFIG_NET_SCH_CAKE=m" "$CONFIG_PATH"; then
+            # 再次驗證 (容許 =y 或 =m，K2P 預設的 =y 就不會報錯了)
+            if grep -qE "CONFIG_NET_SCH_CAKE=[ym]" "$CONFIG_PATH"; then
                echo "🎉 CAKE Patch Applied Successfully!"
                echo "📢 Reminder: When you miss Dave, modprobe sch_cake!"
             else
