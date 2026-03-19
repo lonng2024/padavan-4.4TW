@@ -1,21 +1,21 @@
+
 name: Custom-Router-Build-Final-Fix
 
 on:
   workflow_dispatch:
     inputs:
       target_select:
-        description: "选择机型 (Target Model)"
+        description: "選擇機型 (Target Model)"
         required: true
         type: choice
         options:
           - K2P
           - C-Life-XG1
-          - K2P-NANO
           - K2P-USB
           - MI-R3G
           - NEWIFI3
           - RM2100
-          # 新增支援清单 (基于 trunk/configs/boards)
+          # 新增支援清單 (基於 trunk/configs/boards)
           - CR660x
           - DIR-878
           - DIR-882
@@ -27,16 +27,16 @@ on:
           - MR2600
           - NETGEAR-BZV
           - XY-C1
-        default: C-Life-XG1
+        default: K2P
 
       language_select:
-        description: "WebUI 语言设定 (Custom Language Selector)"
+        description: "WebUI 語言設定 (Custom Language Selector)"
         required: true
         type: choice
-        default: 'CN (繁体中文)'
+        default: 'English_Only'
         options:
           - English_Only
-          - CN (繁体中文)
+          - CN (繁體中文)
           - RU (Pусский)
           - BR (Brazil)
           - CZ (Česky)
@@ -51,18 +51,18 @@ on:
           - UK (Українська)
       
       nanoversion:
-        description: "开启极限瘦身 (Nano Optimization)"
+        description: "開啟極限瘦身 (Nano Optimization)"
         type: boolean
         default: true
       
       customization:
-        description: '自定义默认配置 JSON (Custom Default Configuration Wi-Fi/Passwords/IP)'
+        description: '自訂預設配置 JSON (Custom Default Configuration Wi-Fi/Passwords/IP)'
         required: true
         type: string
         default: '{"lanip":"192.168.0.1","signaccount":"admin","signpassword":"admin","wifi2gssid":"Padavan","wifi2gpsk":"1234567890","wifi5gssid":"Padavan-5G","wifi5gpsk":"1234567890"}'
       
       toolchain_select:
-        description: "选择编译工具链 (Select toolchain)"
+        description: "選擇編譯工具鏈 (Select toolchain)"
         required: true
         type: choice
         options:
@@ -97,7 +97,7 @@ jobs:
             zlib1g-dev liblzma-dev liblzo2-dev \
             libgmp3-dev libmpc-dev libmpfr-dev \
             libncurses5-dev xxd nano cmake pkg-config ccache jq
-          # 设定时间 YYYYMMDD-HHMM
+          # 設定台灣時間 YYYYMMDD-HHMM
           echo "BUILD_TIME=$(TZ='Asia/Taipei' date +%Y%m%d-%H%M)" >> $GITHUB_ENV
           mkdir -p /opt/images/
 
@@ -113,15 +113,15 @@ jobs:
           git clone --depth=1 https://github.com/TWShiyuLiou1997/padavan-4.4.git /opt/rt-n56u
 
       # =======================================================
-      #[步骤 A] 统一准备资源（只需克隆一次！）
+      # [步驟 A] 統一準備資源 (只 Clone 一次！)
       # =======================================================
       - name: ⬇️ Prepare Reference Source (padavan-ng)
         run: |
           echo "::group::Clone padavan-ng to /tmp"
-          # 确保环境干净
+          # 確保環境乾淨
           rm -rf /tmp/padavan-ng
           
-          # 将统一克隆到临时目录
+          # 統一 Clone 到臨時目錄
           git clone --depth=1 https://github.com/TWShiyuLiou1997/padavan-ng.git /tmp/padavan-ng
           
           echo "✅ Reference repo ready at /tmp/padavan-ng"
@@ -135,7 +135,7 @@ jobs:
           set -x
           echo "::group::BusyBox Evolution V43"
           
-          # 1. 定义变量（只读防止篡改）
+          # 1. 定義變數 (Readonly 防止篡改)
           readonly REPO_ROOT="/opt/rt-n56u"
           readonly ORIGINAL_CONFIG="$REPO_ROOT/trunk/configs/boards/busybox.config"
           readonly SOURCE_DIR="/tmp/padavan-ng/trunk/user/busybox"
@@ -151,7 +151,7 @@ jobs:
           fi
 
           # -------------------------------------------------------
-          # 2. 定义全套检查清单 (MIPS Router Optimized / Diff Mode)
+          # 2. 定義全套檢查清單 (MIPS Router Optimized / Diff Mode)
           # -------------------------------------------------------
           CHECKS_SET=(
               # Shells
@@ -194,14 +194,14 @@ jobs:
               "CONFIG_FEATURE_UDHCPC_SANITIZEOPT y"
               "CONFIG_FEATURE_UDHCP_RFC3397 y"
               "CONFIG_FEATURE_UDHCP_RFC5969 y"
-              # [新增] NTP 时间服务器（增强内网对时）
+              # [新增] NTP 時間伺服器 (增強內網對時)
               "CONFIG_NTPD y"
               "CONFIG_FEATURE_NTPD_SERVER y"
-              # 新增 IPCALC 高级计算（确保所有脚本 100% 兼容）
+              # [新增] IPCALC 進階計算 (確保所有腳本 100% 相容)
               "CONFIG_IPCALC y"
               "CONFIG_FEATURE_IPCALC_LONG_OPTIONS y"
               "CONFIG_FEATURE_IPCALC_FANCY y"
-              # 移至 UNSET 以避免冲突/iproute2-5.12.0/ip
+              # [移除] 移至 UNSET 以避免衝突/iproute2-5.12.0/ip
               # "CONFIG_IPNEIGH y"
               # "CONFIG_FEATURE_IP_NEIGH y"
               "CONFIG_NC y"
@@ -211,7 +211,7 @@ jobs:
               "CONFIG_FEATURE_NSLOOKUP_LONG_OPTIONS y"
               "CONFIG_FEATURE_NTP_AUTH y"
               "CONFIG_SSL_CLIENT y"
-              # [移除并移至 UNSET 以避免冲突/iproute2-5.12.0/tc
+              # [移除] 移至 UNSET 以避免衝突/iproute2-5.12.0/tc
               # "CONFIG_TC y"
               # "CONFIG_FEATURE_TC_INGRESS y"
               "CONFIG_TLS y"
@@ -229,12 +229,12 @@ jobs:
               
               # Loop & Core
               "CONFIG_NO_LOOP_CONFIGURE y"
-              # MIPS架构不支持x86优化
+              # [移除] MIPS 架構不支援 x86 優化
               # "CONFIG_STACK_OPTIMIZATION_386 y"
               "CONFIG_BZIP2_SMALL 9"
               "CONFIG_CRC32 y"
               "CONFIG_FEATURE_CP_REFLINK y"
-              # 移除因数分解，路由器用不到
+              # [移除] 因數分解，路由器用不到
               # "CONFIG_FACTOR y"
               "CONFIG_LINK y"
               "CONFIG_SHA256SUM y"
@@ -249,7 +249,7 @@ jobs:
               "CONFIG_BB_ARCH y"
               "CONFIG_BASE32 y"
               "CONFIG_BASE64 y"
-              # 路由器不支持休眠唤醒
+              # [移除] 路由器不支援休眠喚醒
               # "CONFIG_RESUME y"
               "CONFIG_RUN_INIT y"
               "CONFIG_FEATURE_XARGS_SUPPORT_PARALLEL y"
@@ -264,7 +264,7 @@ jobs:
               "CONFIG_MODINFO y"
               # [移除] Flash 不支援 TRIM
               # "CONFIG_BLKDISCARD y"
-              # 路由器文件系统通常无需预分配
+              # [移除] 路由器檔案系統通常不需預分配
               # "CONFIG_FALLOCATE y"
               # "CONFIG_FSFREEZE y"
               "CONFIG_GETOPT y"
@@ -274,10 +274,10 @@ jobs:
               "CONFIG_FEATURE_MDEV_DAEMON y"
               "CONFIG_MKE2FS y"
               "CONFIG_MKDOSFS y"
-              # 移除架构错误，MIPS 不需要这些
+              # [移除] 架構錯誤，MIPS 不需要這些
               # "CONFIG_LINUX32 y"
               # "CONFIG_LINUX64 y"
-              # [移除] 与容器相关，MIPS 效能较差且使用较少
+              # [移除] 容器相關，MIPS 效能差且少用
               # "CONFIG_SETPRIV y"
               # "CONFIG_FEATURE_SETPRIV_DUMP y"
               # "CONFIG_FEATURE_SETPRIV_CAPABILITIES y"
@@ -290,7 +290,7 @@ jobs:
               "CONFIG_FEATURE_CROND_SPECIAL_TIMES y"
               "CONFIG_GETFATTR y"
               "CONFIG_HEXEDIT y"
-              # [移除] 无 I2C 硬件支持
+              # [移除] 無 I2C 硬體支援
               # "CONFIG_I2CTRANSFER y"
               "CONFIG_LSSCSI y"
               "CONFIG_MIM y"
@@ -306,7 +306,7 @@ jobs:
               "CONFIG_FEATURE_SHOW_SCRIPT y"
               "CONFIG_FLOAT_DURATION y"
               "CONFIG_NOLOGIN y"
-              # [移除] 仅用于调试，极少使用
+              # [移除] 僅供除錯，極少使用
               # "CONFIG_NSENTER y"
               "CONFIG_FEATURE_START_STOP_DAEMON_LONG_OPTIONS y"
               "CONFIG_FEATURE_SWAPON_PRI y"
@@ -315,7 +315,7 @@ jobs:
               "CONFIG_FEATURE_CATV y"
               
               # Volume IDs
-              # [移除] 路由器极少使用这些文件系统，从而节省空间
+              # [移除] 路由器極少用到這些檔案系統，節省空間
               # "CONFIG_FEATURE_VOLUMEID_BCACHE y"
               # "CONFIG_FEATURE_VOLUMEID_EROFS y"
               # "CONFIG_FEATURE_VOLUMEID_MINIX y"
@@ -348,10 +348,10 @@ jobs:
               "CONFIG_FEATURE_UDHCP_8021Q"
               "CONFIG_ASH_BASH_SOURCE_CURDIR"
               
-              # --- [新增] 避免冲突/iproute2-5.12.0/ip & /iproute2-5.12.0/tc & 强化安全（强制关闭） ---
-              # --- [新增] 避免冲突→确保：「CONFIG_FEATURE_NTPD_CONF is not set」>Padavan 的系統架构中，ntpd 是由 rc 程式通过命令行参数（Command Line Arguments）直接启动的（例如 ntpd -n -l -p ...）。它不会去读取 /etc/ntp.conf。如果您已开启此选项，BusyBox 反而由于找不到配置文件而报错，或者忽略启动参数。因此必须关闭（UNSET）。
+              # --- [新增] 避免衝突/iproute2-5.12.0/ip & /iproute2-5.12.0/tc & 強化資安 (強制關閉) ---
+              # --- [新增] 避免衝突→<確保：「CONFIG_FEATURE_NTPD_CONF is not set」>Padavan 的系統架構中，ntpd 是由 rc 程式透過指令列參數（Command Line Arguments）直接啟動的（例如 ntpd -n -l -p ...）。它不會去讀取 /etc/ntp.conf。如果您開啟了這個選項，BusyBox 反而會因為找不到設定檔而報錯，或者忽略啟動參數。所以必須關閉（UNSET）。
               "CONFIG_FEATURE_NTPD_CONF"
-              # IP 主程式与功能 (全杀，因为有 iproute2)
+              # IP 主程式與功能 (全殺，因為有 iproute2)
               "CONFIG_IP"
               "CONFIG_IPADDR"
               "CONFIG_IPLINK"
@@ -360,29 +360,29 @@ jobs:
               "CONFIG_IPRULE"
               "CONFIG_IPNEIGH"
               
-              # IP 详细功能设置（全杀）
+              # IP 詳細功能設定 (全殺)
               "CONFIG_FEATURE_IP_ADDRESS"
               "CONFIG_FEATURE_IP_LINK"
               
-              # [💀 导致编译失败错误1的元凶]
+              # [💀 導致編譯失敗 Error 1 的兇手]
               "CONFIG_FEATURE_IP_LINK_CAN"
               
-              # IP 其他功能与协定
+              # IP 其他功能與協定
               "CONFIG_FEATURE_IP_ROUTE"
               "CONFIG_FEATURE_IP_TUNNEL"
               "CONFIG_FEATURE_IP_RULE"
               "CONFIG_FEATURE_IP_NEIGH"
               "CONFIG_FEATURE_IP_RARE_PROTOCOLS"
               
-              # TC 流量控制 (全杀，因为有 iproute2)
+              # TC 流量控制 (全殺，因為有 iproute2)
               "CONFIG_TC"
               "CONFIG_FEATURE_TC_INGRESS"
               
-              # 旧式服务与安全风险（建议关闭）
+              # 舊式服務與資安風險 (建議關閉)
               "CONFIG_TCPSVD"
               "CONFIG_UDPSVD"
               
-              # --- [新增] 架构与垃圾清理（强制关闭） ---
+              # --- [新增] 架構與垃圾清理 (強制關閉) ---
               "CONFIG_STACK_OPTIMIZATION_386"
               "CONFIG_RESUME"
               "CONFIG_BLKDISCARD"
@@ -451,7 +451,7 @@ jobs:
           }
 
           # =======================================================
-          # 4. 执行流程
+          # 4. 執行流程
           # =======================================================
           echo "🏗️ [PHASE 1] Source Code Swap"
           rm -rf "$TARGET_DIR"
@@ -463,7 +463,7 @@ jobs:
           cp -f "$ORIGINAL_CONFIG" .config
           yes "" | make oldconfig || true
 
-          # 4.3 [SMART CLEAN] 智慧清理 (防止重复定义)
+          # 4.3 [SMART CLEAN] 智慧清理 (防止重複定義)
           echo "   -> Cleaning ALL target keys to prevent reassign warnings..."
           for ENTRY in "${CHECKS_SET[@]}"; do
               KEY=${ENTRY%% *}
@@ -474,7 +474,7 @@ jobs:
           done
           echo "   ✅ Clean complete."
 
-          # 4.4 [INJECT] 注入设定
+          # 4.4 [INJECT] 注入設定
           echo "   -> Injecting Specs..."
           {
               echo "# --- Custom Injection Start ---"
@@ -493,7 +493,7 @@ jobs:
           yes "" | make oldconfig || true
 
           # =======================================================
-          # 5. [IRONCLAD AUDIT] 本地验证循环
+          # 5. [IRONCLAD AUDIT] 本地驗證迴圈
           # =======================================================
           echo "🔍 [PHASE 3] Local Audit Loop (.config)"
           CURRENT_FILE=".config"
@@ -526,7 +526,7 @@ jobs:
           echo "✅ Round 3 Passed. Config is Perfect."
 
           # =======================================================
-          # 6. [SYNC & FULL VERIFY] 同步 + 逐一验证
+          # 6. [SYNC & FULL VERIFY] 同步 + 逐一驗證
           # =======================================================
           echo "🌍 [PHASE 4] Sync & Global Verify"
           
@@ -551,7 +551,7 @@ jobs:
           echo "✅ All 3 Targets are 100% Synchronized and Verified."
 
           # =======================================================
-          # 7. [CODE & BUILD] 程式代码与依赖验证
+          # 7. [CODE & BUILD] 程式碼與依賴驗證
           # =======================================================
           echo "💉 [PHASE 5] Code & Build Verify"
           
@@ -611,14 +611,14 @@ jobs:
           # =======================================================
           echo "🛡️ [PHASE 7] Applying Security Patches"
           
-          # 1. 進入 busybox 源码目录
-          # 注意：此时我们在 trunk 目录 (PHASE 6 結束位置)，所以要进 user/busybox
+          # 1. 進入 busybox 源碼目錄
+          # 注意：此時我們在 trunk 目錄 (PHASE 6 結束位置)，所以要進 user/busybox
           cd user/busybox
           
-          # 进入版本号目录 (如果存在)
+          # 進入版本號目錄 (如果存在)
           if [ -d "busybox-1.37.0" ]; then cd "busybox-1.37.0"; fi
           
-          # 2. 建立 patches 专用目录
+          # 2. 建立 patches 專用目錄
           echo "   -> Creating 'patches' directory..."
           mkdir -p patches
 
@@ -662,7 +662,7 @@ jobs:
 
           # -------------------------------------------------------
           # [Patch 2] CVE-2025-46394: Libarchive Terminal Injection (V2)
-          # 已移除 testsuite 测试脚本，只修复核心 .c 档案
+          # 已移除 testsuite 測試腳本，只修復核心 .c 檔案
           # -------------------------------------------------------
           cat << 'CVE_PATCH_2' > patches/CVE-2025-46394.patch
           From: Denys Vlasenko <vda.linux@googlemail.com>
@@ -716,7 +716,7 @@ jobs:
           echo "::endgroup::"
 
       # =======================================================
-      # [步驟 C] 同步 libmnl (重复利用同一个来源)
+      # [步驟 C] 同步 libmnl (重複利用同一個來源)
       # =======================================================
       - name: 🔥 Sync libmnl from padavan-ng
         run: |
@@ -725,60 +725,60 @@ jobs:
           TARGET_DIR="/opt/rt-n56u/trunk/libs/libmnl"
           SOURCE_DIR="/tmp/padavan-ng/trunk/libs/libmnl"
 
-          # 1. 移除旧版
+          # 1. 移除舊版
           rm -rf "$TARGET_DIR"
           
-          # 2. 检查來源
+          # 2. 檢查來源
           if [ ! -d "$SOURCE_DIR" ]; then
              echo "❌ Error: 來源資料夾 $SOURCE_DIR 不存在"
              exit 1
           fi
           
-          # 3. 搬运
+          # 3. 搬運
           cp -rf "$SOURCE_DIR" "$TARGET_DIR"
           
-          # 4. 验证
+          # 4. 驗證
           if [ -f "$TARGET_DIR/Makefile" ]; then
-            echo "✅ libmnl 搬运成功！"
+            echo "✅ libmnl 搬運成功！"
           else
-            echo "::error::❌ 搬运失敗！找不到 Makefile"
+            echo "::error::❌ 搬運失敗！找不到 Makefile"
             exit 1
           fi
           
-          # 5. 清理临时文件
+          # 5. 清理臨時檔案
           rm -rf /tmp/padavan-ng
           echo "::endgroup::"
 
       # =======================================================
-      # [終极收集版] iptables Patch Collector & Patcher
+      # [終極收集版] iptables Patch Collector & Patcher
       # =======================================================
       - name: 🔥 Collect & Patch iptables (Enhanced Logic)
         run: |
-          set +e  # 关闭错误中断，确认保跑完全程
-          set -x  # 如果需要关闭错误中断，确认 Debug 可打开此行
+          set +e  # 關閉錯誤中斷，確保跑完全程
+          set -x  # 如果需要極致 Debug 可打開此行
           
           echo "::group::Patching Iptables 1.8.7 (Collector Mode)"
           
           # =======================================================
-          # ⚙️ 设定区
+          # ⚙️ 設定區
           # =======================================================
           IPT_ROOT="/opt/rt-n56u/trunk/user/iptables/iptables-1.8.7"
           PATCH_DIR="patches_archive"
           LOG_FILE="patch_summary.log"
           
-          # [初始化] 流程控制变数
+          # [初始化] 流程控制變數
           SKIP_PATCHING=false
           
-          # 优化全局网络设置
+          # 優化全局網路設置
           git config --global http.postBuffer 524288000
           git config --global http.lowSpeedLimit 0
           git config --global http.lowSpeedTime 999999
           git config --global http.sslVerify false
           
-          # 检查源代码目录是否存在
+          # 檢查原始碼目錄是否存在
           if [ ! -d "$IPT_ROOT" ]; then
              echo "❌ CRITICAL: Source directory '$IPT_ROOT' NOT FOUND!"
-             # 依据完美逻辑设定 SKIP_PATCHING，确保流程可控
+             # 依據完美邏輯設定 SKIP_PATCHING，確保流程可控
              SKIP_PATCHING=true
           else
              cd "$IPT_ROOT"
@@ -786,7 +786,7 @@ jobs:
              touch "$LOG_FILE"
           fi
 
-          # ⚙️ 根据状态决定是否应用 Patch
+          # ⚙️ 根據狀態決定是否套用 Patch
           if [ "$SKIP_PATCHING" = true ]; then
               APPLY_PATCHES=false
               echo "⚠️ Skipping Patch Application due to directory check failure."
@@ -795,20 +795,20 @@ jobs:
           fi
 
           # =======================================================
-          # 🛠️ [核心函数] 独立验证逻辑 (V12.3: Awk 智能边界判定 + 行数防御)
+          # 🛠️ [核心函數] 獨立驗證邏輯 (V12.3: Awk 智慧邊界判定 + 行數防禦)
           # =======================================================
           verify_patch_integrity() {
               local F_PATH="$1"
               local EXP_ID="$2"
               local EXP_SUBJ="$3"
               
-              # 1. 基础文件检查
+              # 1. 基礎檔案檢查
               if [ ! -s "$F_PATH" ]; then return 1; fi
               if ! grep -qE "^diff --git|^--- a/" "$F_PATH"; then return 1; fi
 
               local CHECK_PASS=true
 
-              # 2. Commit ID 比对
+              # 2. Commit ID 比對
               if [ -n "$EXP_ID" ]; then
                   local FILE_ID=$(grep "^From " "$F_PATH" | head -n 1 | awk '{print $2}')
                   if [[ "$FILE_ID" == "$EXP_ID"* ]]; then
