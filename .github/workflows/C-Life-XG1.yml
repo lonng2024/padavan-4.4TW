@@ -33,7 +33,7 @@ on:
         description: "WebUI 语言设定 (Custom Language Selector)"
         required: true
         type: choice
-        default: 'CN'
+        default: 'CN (繁体中文)'
         options:
           - English_Only
           - CN (繁体中文)
