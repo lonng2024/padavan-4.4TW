@@ -1,4 +1,3 @@
-
 name: Custom-Router-Build-Final-Fix
 
 on:
@@ -33,7 +32,7 @@ on:
         description: "WebUI 語言設定 (Custom Language Selector)"
         required: true
         type: choice
-        default: 'English_Only'
+        default: 'CN (繁體中文)'
         options:
           - English_Only
           - CN (繁體中文)
@@ -83,10 +82,7 @@ jobs:
     steps:
       - name: 📥-Checkout-Repository
         uses: actions/checkout@master
-      - name: 🔧 Set Target Environment
-        run: |
-          echo "TNAME=${{ inputs.target_select }}" >> $GITHUB_ENV
-          echo "Target model set to: ${{ inputs.target_select }}"
+      
       - name: 🚀-Install-Dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -1231,7 +1227,7 @@ jobs:
           echo "⬇️ Processing Arptables..."
           
           # [步驟 A] 確保 Userland Config 開啟
-          USER_CONFIG="/opt/rt-n56u/trunk/.config"
+          USER_CONFIG="rt-n56u/trunk/.config"
           if [ -f "$USER_CONFIG" ]; then
               echo "🔧 Enabling CONFIG_USER_ARPTABLES in Userland .config..."
               sed -i 's/^CONFIG_USER_ARPTABLES=.*/CONFIG_USER_ARPTABLES=y/' "$USER_CONFIG"
