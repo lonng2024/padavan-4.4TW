@@ -1417,8 +1417,8 @@ jobs:
           NANO_OPT: ${{ inputs.nanoversion }}
           TOOLCHAIN_CHOICE: ${{ inputs.toolchain_select }}
         run: |
-          TEMPLATE_DIR="/opt/rt-n56u/trunk/configs/templates"
-          TRUNK_CONFIG="/opt/rt-n56u/trunk/.config"
+          TEMPLATE_DIR="rt-n56u/trunk/configs/templates"
+          TRUNK_CONFIG="rt-n56u/trunk/.config"
           
           PATTERN_A=$(echo "$RAW_TNAME" | sed 's/-/_/g')
           PATTERN_B=$(echo "$RAW_TNAME")
