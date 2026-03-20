@@ -98,7 +98,7 @@ jobs:
             libncurses5-dev xxd nano cmake pkg-config ccache jq
           # 設定台灣時間 YYYYMMDD-HHMM
           echo "BUILD_TIME=$(TZ='Asia/Taipei' date +%Y%m%d-%H%M)" >> $GITHUB_ENV
-          mkdir -p /opt/images/
+          mkdir -p images/
 
       - name: 🔎-Export-Custom-Variables
         run: |
@@ -109,7 +109,7 @@ jobs:
 
       - name: ⬇️-Clone-Source-Code
         run: |
-          git clone --depth=1 https://github.com/TWShiyuLiou1997/padavan-4.4.git /opt/rt-n56u
+          git clone --depth=1 https://github.com/TWShiyuLiou1997/padavan-4.4.git rt-n56u
 
       # =======================================================
       # [步驟 A] 統一準備資源 (只 Clone 一次！)
@@ -135,7 +135,7 @@ jobs:
           echo "::group::BusyBox Evolution V43"
           
           # 1. 定義變數 (Readonly 防止篡改)
-          readonly REPO_ROOT="/opt/rt-n56u"
+          readonly REPO_ROOT="rt-n56u"
           readonly ORIGINAL_CONFIG="$REPO_ROOT/trunk/configs/boards/busybox.config"
           readonly SOURCE_DIR="/tmp/padavan-ng/trunk/user/busybox"
           readonly TARGET_DIR="$REPO_ROOT/trunk/user/busybox"
@@ -1502,7 +1502,7 @@ jobs:
           TARGET_BOARD="${{ inputs.target_select }}"
           
           # Kernel 4.4 (hanwckf) 的 Template 路徑通常在這裡
-          TEMPLATE_DIR="/opt/rt-n56u/trunk/configs/templates"
+          TEMPLATE_DIR="rt-n56u/trunk/configs/templates"
           CONFIG_PATH="$TEMPLATE_DIR/$TARGET_BOARD.config"
           
           # 解析語言代碼 (例如 "CN (繁體中文)" -> "CN")
@@ -1570,7 +1570,7 @@ jobs:
           # 1. 取得目標機型的設定檔路徑
           # 邏輯：trunk/configs/boards/{機型名稱}/kernel-4.4.x.config
           TARGET_BOARD="${{ inputs.target_select }}"
-          CONFIG_PATH="/opt/rt-n56u/trunk/configs/boards/$TARGET_BOARD/kernel-4.4.x.config"
+          CONFIG_PATH="rt-n56u/trunk/configs/boards/$TARGET_BOARD/kernel-4.4.x.config"
           
           echo "🎯 Target Board: $TARGET_BOARD"
           echo "📂 Config Path: $CONFIG_PATH"
@@ -1607,7 +1607,7 @@ jobs:
             echo "❌ Config file not found at $CONFIG_PATH"
             echo "   Please check if the directory name matches the target_select option."
             # 列出目錄供除錯
-            ls -F /opt/rt-n56u/trunk/configs/boards/ || true
+            ls -F rt-n56u/trunk/configs/boards/ || true
           fi
           echo "::endgroup::"
             
