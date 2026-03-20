@@ -83,7 +83,10 @@ jobs:
     steps:
       - name: 📥-Checkout-Repository
         uses: actions/checkout@master
-      
+      - name: 🔧 Set Target Environment
+        run: |
+          echo "TNAME=${{ inputs.target_select }}" >> $GITHUB_ENV
+          echo "Target model set to: ${{ inputs.target_select }}"
       - name: 🚀-Install-Dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
